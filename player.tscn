@@ -421,9 +421,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.18, -1.9665116, 0)
 [node name="PuppetRoot" type="Node3D" parent="."]
 script = ExtResource("2_hqtel")
 TorsoPath = NodePath("PuppetTorso")
-HeadPath = NodePath("PuppetTorso/Head")
-LowerArmLPath = NodePath("PuppetTorso/UpperArm_L/LowerArm_L")
-LowerArmRPath = NodePath("PuppetTorso/UpperArm_R/LowerArm_R")
+HeadPath = NodePath("PuppetTorso/NeckJoint/Head")
+LowerArmLPath = NodePath("PuppetTorso/ShoulderJoint_L/UpperArm_L/ElbowJoint_L/LowerArm_L")
+LowerArmRPath = NodePath("PuppetTorso/ShoulderJoint_R/UpperArm_R/ElbowJoint_R/LowerArm_R")
 LowerLegLPath = NodePath("PuppetTorso/HipJoint_L/UpperLeg_L/KneeJoint_L/LowerLeg_L")
 LowerLegRPath = NodePath("PuppetTorso/HipJoint_R/UpperLeg_R/KneeJoint_R/LowerLeg_R")
 StringTorsoPath = NodePath("../StringsRoot/String_Torso")
@@ -438,7 +438,7 @@ mass = 6.0
 script = ExtResource("3_sweqy")
 Target = NodePath("../../StringsRoot/String_Torso")
 AttachOffset = Vector3(0, 0.6359495, 0)
-RestLength = 0.820848
+RestLength = 0.36778745
 Stiffness = 480.0
 Damping = 72.0
 MaxForce = 300.0
@@ -451,128 +451,125 @@ skeleton = NodePath("")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01733321, 0)
 shape = SubResource("CapsuleShape3D_onrkg")
 
-[node name="Head" type="RigidBody3D" parent="PuppetRoot/PuppetTorso" node_paths=PackedStringArray("Target")]
+[node name="NeckJoint" type="ConeTwistJoint3D" parent="PuppetRoot/PuppetTorso"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5220766, 0)
+node_a = NodePath("..")
+node_b = NodePath("Head")
+twist_span = 0.7853982
+
+[node name="Head" type="RigidBody3D" parent="PuppetRoot/PuppetTorso/NeckJoint" node_paths=PackedStringArray("Target")]
 script = ExtResource("3_sweqy")
-Target = NodePath("../../../StringsRoot/String_Head")
+Target = NodePath("../../../../StringsRoot/String_Head")
 AttachOffset = Vector3(0, 0.39914018, 0)
-RestLength = 0.7398441
+RestLength = 0.6067251
 Stiffness = 80.0
 Damping = 12.0
 MaxForce = 50.0
 
-[node name="MeshHead" type="MeshInstance3D" parent="PuppetRoot/PuppetTorso/Head"]
+[node name="MeshHead" type="MeshInstance3D" parent="PuppetRoot/PuppetTorso/NeckJoint/Head"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5220766, 0)
 mesh = SubResource("ArrayMesh_hqtel")
 skeleton = NodePath("")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="PuppetRoot/PuppetTorso/Head"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PuppetRoot/PuppetTorso/NeckJoint/Head"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0049438477, 0.2149229, -0.006591797)
 shape = SubResource("BoxShape3D_hqtel")
 
-[node name="NeckJoint" type="ConeTwistJoint3D" parent="PuppetRoot/PuppetTorso/Head"]
-node_a = NodePath("../..")
-node_b = NodePath("..")
-twist_span = 0.7853982
+[node name="ShoulderJoint_L" type="ConeTwistJoint3D" parent="PuppetRoot/PuppetTorso"]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -0.3117712, 0.40479055, 0)
+rotation_order = 0
+node_a = NodePath("..")
+node_b = NodePath("UpperArm_L")
+twist_span = 0.5235988
+softness = 0.5
 
-[node name="UpperArm_L" type="RigidBody3D" parent="PuppetRoot/PuppetTorso"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3117712, 0.40479055, 0)
+[node name="UpperArm_L" type="RigidBody3D" parent="PuppetRoot/PuppetTorso/ShoulderJoint_L"]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 0, 0)
 mass = 0.5
 
-[node name="MeshUpperArm_L" type="MeshInstance3D" parent="PuppetRoot/PuppetTorso/UpperArm_L"]
+[node name="MeshUpperArm_L" type="MeshInstance3D" parent="PuppetRoot/PuppetTorso/ShoulderJoint_L/UpperArm_L"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3117712, -0.40479055, 0)
 mesh = SubResource("ArrayMesh_b26j0")
 skeleton = NodePath("")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="PuppetRoot/PuppetTorso/UpperArm_L"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PuppetRoot/PuppetTorso/ShoulderJoint_L/UpperArm_L"]
 transform = Transform3D(-4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0, 1, -0.29097366, -0.005006492, 0)
 shape = SubResource("CapsuleShape3D_i3pqv")
 
-[node name="ShoulderJoint_L" type="ConeTwistJoint3D" parent="PuppetRoot/PuppetTorso/UpperArm_L"]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
-rotation_order = 0
-visible = false
-node_a = NodePath("../..")
-node_b = NodePath("..")
-twist_span = 0.5235988
-softness = 0.5
-
-[node name="LowerArm_L" type="RigidBody3D" parent="PuppetRoot/PuppetTorso/UpperArm_L" node_paths=PackedStringArray("Target")]
+[node name="ElbowJoint_L" type="HingeJoint3D" parent="PuppetRoot/PuppetTorso/ShoulderJoint_L/UpperArm_L"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.56759655, -0.009303957, 0)
-mass = 0.3
-script = ExtResource("3_sweqy")
-Target = NodePath("../../../../StringsRoot/String_LeftHand")
-AttachOffset = Vector3(-0.22711319, -0.05430436, 0)
-RestLength = 1.3446008
-Stiffness = 80.0
-Damping = 12.0
-MaxForce = 50.0
-
-[node name="MeshLowerArm_L" type="MeshInstance3D" parent="PuppetRoot/PuppetTorso/UpperArm_L/LowerArm_L"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.87936777, -0.3954866, 0)
-mesh = SubResource("ArrayMesh_n7ghd")
-skeleton = NodePath("")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="PuppetRoot/PuppetTorso/UpperArm_L/LowerArm_L"]
-transform = Transform3D(-4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0, 1, -0.25703174, 0.004297465, 0)
-shape = SubResource("CapsuleShape3D_hqtel")
-
-[node name="ElbowJoint_L" type="HingeJoint3D" parent="PuppetRoot/PuppetTorso/UpperArm_L/LowerArm_L"]
-node_a = NodePath("../..")
-node_b = NodePath("..")
+node_a = NodePath("..")
+node_b = NodePath("LowerArm_L")
 angular_limit/enable = true
 angular_limit/upper = 3.1415927
 angular_limit/lower = 0.6981317
 angular_limit/bias = 0.2
 
-[node name="UpperArm_R" type="RigidBody3D" parent="PuppetRoot/PuppetTorso"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.30588064, 0.40178782, 0)
-mass = 0.5
-
-[node name="MeshUpperArm_R" type="MeshInstance3D" parent="PuppetRoot/PuppetTorso/UpperArm_R"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.30588064, -0.40178782, 0)
-mesh = SubResource("ArrayMesh_1jxqw")
-skeleton = NodePath("")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="PuppetRoot/PuppetTorso/UpperArm_R"]
-transform = Transform3D(-4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0, 1, 0.29201236, -0.0020037591, 0)
-shape = SubResource("CapsuleShape3D_1jxqw")
-
-[node name="ShoulderJoint_R" type="ConeTwistJoint3D" parent="PuppetRoot/PuppetTorso/UpperArm_R"]
-visible = false
-node_a = NodePath("../..")
-node_b = NodePath("..")
-twist_span = 0.5235988
-softness = 0.5
-
-[node name="LowerArm_R" type="RigidBody3D" parent="PuppetRoot/PuppetTorso/UpperArm_R" node_paths=PackedStringArray("Target")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.54279375, -0.0048159957, 0)
+[node name="LowerArm_L" type="RigidBody3D" parent="PuppetRoot/PuppetTorso/ShoulderJoint_L/UpperArm_L/ElbowJoint_L" node_paths=PackedStringArray("Target")]
 mass = 0.3
 script = ExtResource("3_sweqy")
-Target = NodePath("../../../../StringsRoot/String_RightHand")
-AttachOffset = Vector3(0.2578069, -0.05578956, 0)
-RestLength = 1.344601
+Target = NodePath("../../../../../../StringsRoot/String_LeftHand")
+AttachOffset = Vector3(-0.22711319, -0.05430436, 0)
+RestLength = 0.8918009
 Stiffness = 80.0
 Damping = 12.0
 MaxForce = 50.0
 
-[node name="MeshLowerArm_R" type="MeshInstance3D" parent="PuppetRoot/PuppetTorso/UpperArm_R/LowerArm_R"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8486744, -0.39697182, 0)
-mesh = SubResource("ArrayMesh_dw050")
+[node name="MeshLowerArm_L" type="MeshInstance3D" parent="PuppetRoot/PuppetTorso/ShoulderJoint_L/UpperArm_L/ElbowJoint_L/LowerArm_L"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.87936777, -0.3954866, 0)
+mesh = SubResource("ArrayMesh_n7ghd")
 skeleton = NodePath("")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="PuppetRoot/PuppetTorso/UpperArm_R/LowerArm_R"]
-transform = Transform3D(-4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0, 1, 0.29159367, 0.005045414, 0)
-shape = SubResource("CapsuleShape3D_sweqy")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PuppetRoot/PuppetTorso/ShoulderJoint_L/UpperArm_L/ElbowJoint_L/LowerArm_L"]
+transform = Transform3D(-4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0, 1, -0.25703174, 0.004297465, 0)
+shape = SubResource("CapsuleShape3D_hqtel")
 
-[node name="ElbowJoint_R" type="HingeJoint3D" parent="PuppetRoot/PuppetTorso/UpperArm_R/LowerArm_R"]
-visible = false
-node_a = NodePath("../..")
-node_b = NodePath("..")
+[node name="ShoulderJoint_R" type="ConeTwistJoint3D" parent="PuppetRoot/PuppetTorso"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.30588064, 0.40178782, 0)
+node_a = NodePath("..")
+node_b = NodePath("UpperArm_R")
+twist_span = 0.5235988
+softness = 0.5
+
+[node name="UpperArm_R" type="RigidBody3D" parent="PuppetRoot/PuppetTorso/ShoulderJoint_R"]
+mass = 0.5
+
+[node name="MeshUpperArm_R" type="MeshInstance3D" parent="PuppetRoot/PuppetTorso/ShoulderJoint_R/UpperArm_R"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.30588064, -0.40178782, 0)
+mesh = SubResource("ArrayMesh_1jxqw")
+skeleton = NodePath("")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PuppetRoot/PuppetTorso/ShoulderJoint_R/UpperArm_R"]
+transform = Transform3D(-4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0, 1, 0.29201236, -0.0020037591, 0)
+shape = SubResource("CapsuleShape3D_1jxqw")
+
+[node name="ElbowJoint_R" type="HingeJoint3D" parent="PuppetRoot/PuppetTorso/ShoulderJoint_R/UpperArm_R"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.54279375, -0.0048159957, 0)
+node_a = NodePath("..")
+node_b = NodePath("LowerArm_R")
 angular_limit/enable = true
 angular_limit/upper = -0.6981317
 angular_limit/lower = -3.1415927
 angular_limit/bias = 0.2
+
+[node name="LowerArm_R" type="RigidBody3D" parent="PuppetRoot/PuppetTorso/ShoulderJoint_R/UpperArm_R/ElbowJoint_R" node_paths=PackedStringArray("Target")]
+mass = 0.3
+script = ExtResource("3_sweqy")
+Target = NodePath("../../../../../../StringsRoot/String_RightHand")
+AttachOffset = Vector3(0.2578069, -0.05578956, 0)
+RestLength = 0.8918012
+Stiffness = 80.0
+Damping = 12.0
+MaxForce = 50.0
+
+[node name="MeshLowerArm_R" type="MeshInstance3D" parent="PuppetRoot/PuppetTorso/ShoulderJoint_R/UpperArm_R/ElbowJoint_R/LowerArm_R"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8486744, -0.39697182, 0)
+mesh = SubResource("ArrayMesh_dw050")
+skeleton = NodePath("")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PuppetRoot/PuppetTorso/ShoulderJoint_R/UpperArm_R/ElbowJoint_R/LowerArm_R"]
+transform = Transform3D(-4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0, 1, 0.29159367, 0.005045414, 0)
+shape = SubResource("CapsuleShape3D_sweqy")
 
 [node name="HipJoint_L" type="ConeTwistJoint3D" parent="PuppetRoot/PuppetTorso"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1, -0.5, 0)
@@ -607,8 +604,8 @@ transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0
 physics_material_override = SubResource("PhysicsMaterial_i3pqv")
 script = ExtResource("3_sweqy")
 Target = NodePath("../../../../../../StringsRoot/String_LeftFoot")
-AttachOffset = Vector3(0.0022977367, -0.57868314, 0)
-RestLength = 3.050447
+AttachOffset = Vector3(2.2351742e-08, -0.58000004, 0)
+RestLength = 0.71068066
 Stiffness = 80.0
 Damping = 12.0
 MaxForce = 50.0
@@ -656,8 +653,8 @@ transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0
 physics_material_override = SubResource("PhysicsMaterial_hqtel")
 script = ExtResource("3_sweqy")
 Target = NodePath("../../../../../../StringsRoot/String_RightFoot")
-AttachOffset = Vector3(0.0006983429, -0.5749366, 0)
-RestLength = 3.050447
+AttachOffset = Vector3(7.450581e-09, -0.58000004, 0)
+RestLength = 0.71039104
 Stiffness = 80.0
 Damping = 12.0
 MaxForce = 50.0
