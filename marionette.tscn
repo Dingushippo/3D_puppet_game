@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3 uid="uid://b2pps55soih37"]
+
+[ext_resource type="PackedScene" uid="uid://dnxqecyyix7l" path="res://assets/player/marionette.glb" id="1_y7b2s"]
+
+[node name="marionette" instance=ExtResource("1_y7b2s")]
