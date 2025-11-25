@@ -1,10 +1,12 @@
 using Godot;
 using System;
+using System.IO;
 
 [Tool]
 public partial class PuppetManager : Node3D
 {
 	[Export] public float BaseRestLength = .5f;
+	[Export(PropertyHint.File, "*.glb,")] public string ModelFile;
 	[ExportGroup("Limb nodes (RigidBody3D)")]
 	[Export] public NodePath TorsoPath;
 	[Export] public NodePath HeadPath;
@@ -20,14 +22,20 @@ public partial class PuppetManager : Node3D
 	[Export] public NodePath StringRightHandPath;
 	[Export] public NodePath StringLeftFootPath;
 	[Export] public NodePath StringRightFootPath;
+
+
+	private enum Side {Left, Right};
+	private enum Segment {Upper, Lower};
+	private enum LimbType {Arm, Leg};
 	public override void _Ready()
     {
-		SetupLimb(HeadPath, StringHeadPath, BaseRestLength);
-        SetupLimb(TorsoPath, StringTorsoPath, BaseRestLength + 0.8f);
-        SetupLimb(LowerArmLPath, StringLeftHandPath, BaseRestLength + 1.8f);
-        SetupLimb(LowerArmRPath, StringRightHandPath, BaseRestLength + 1.8f);
-        SetupLimb(LowerLegLPath, StringLeftFootPath, BaseRestLength + 2.8f);
-        SetupLimb(LowerLegRPath, StringRightFootPath, BaseRestLength + 2.8f);
+		// HandleModel(ModelFile);
+		// SetupLimb(HeadPath, StringHeadPath, BaseRestLength);
+        // SetupLimb(TorsoPath, StringTorsoPath, BaseRestLength + 0.8f);
+        // SetupLimb(LowerArmLPath, StringLeftHandPath, BaseRestLength + 1.8f);
+        // SetupLimb(LowerArmRPath, StringRightHandPath, BaseRestLength + 1.8f);
+        // SetupLimb(LowerLegLPath, StringLeftFootPath, BaseRestLength + 2.8f);
+        // SetupLimb(LowerLegRPath, StringRightFootPath, BaseRestLength + 2.8f);
     }
 
 
@@ -63,4 +71,51 @@ public partial class PuppetManager : Node3D
             throw new Exception($"{limbPath} is not MarionetteLimb");
         }
     }
+
+	private void HandleModel(string filePath)
+    {
+        Node modelScene = ResourceLoader.Load<PackedScene>(filePath).Instantiate();
+		Node3D root = modelScene.GetChild<Node3D>(0);
+		AddNodesRecursive(root);
+    }
+
+	private void AddNodesRecursive(Node3D parent)
+    {
+        foreach (Node3D child in parent.GetChildren())
+        {
+			String[] naming = child.Name.ToString().Split("_");
+			switch (naming[0]) {
+                case "Torso":
+					child.Reparent(this);
+					// AddChild(child);
+					continue;
+                default:
+					// parent.AddChild(child);
+					child.Reparent(parent);
+					continue;
+            }
+        }
+    }
+
+	private void HandleLimb(MeshInstance3D limbMesh, LimbType type, Segment segment, Side side)
+    {
+        				
+    }
+
+	// private Joint3D GetCorrectJoint(Segment segment, Side side)
+    // {
+    //     if (segment == Segment.Upper)
+    //     {
+    //         Joint3D joint = new ConeTwistJoint3D();
+    //     }
+	// 	else if (segment == Segment.Lower)
+    //     {
+    //         HingeJoint3D joint = new HingeJoint3D();
+	// 		joint.SetParam(HingeJoint3D.Param.LimitUpper, 0);
+	// 		joint.SetParam(HingeJoint3D.Param.LimitLower, -90);
+	// 		joint.SetParam(HingeJoint3D.Param.LimitBias, 0.3f);
+	// 		joint.SetParam(HingeJoint3D.Param.LimitRelaxation, 1f);
+	// 		joint.RotateX(90);
+    //     }
+    // }
 }
