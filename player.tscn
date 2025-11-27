@@ -426,7 +426,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.18, -1.9665116, 0)
 
 [node name="PuppetRoot" type="Node3D" parent="."]
 script = ExtResource("2_hqtel")
-ModelFile = "uid://4d0tplam3cfv"
 TorsoPath = NodePath("")
 HeadPath = NodePath("")
 LowerArmLPath = NodePath("")
@@ -443,193 +442,189 @@ StringRightFootPath = NodePath("../StringsRoot/String_RightFoot")
 [node name="PuppetBuilder" type="Node3D" parent="PuppetRoot"]
 script = ExtResource("4_hqtel")
 GlbPath = "uid://4d0tplam3cfv"
+DebugDrawAabbs = true
+JointOffset = 0.02
 
-[node name="@RigidBody3D@84739" type="RigidBody3D" parent="PuppetRoot/PuppetBuilder"]
+[node name="Torso" type="RigidBody3D" parent="PuppetRoot/PuppetBuilder"]
+unique_name_in_owner = true
 mass = 1.0849661
 script = ExtResource("3_sweqy")
-AttachOffset = Vector3(0, 0.6359495, 0)
 
-[node name="Torso" type="MeshInstance3D" parent="PuppetRoot/PuppetBuilder/@RigidBody3D@84739"]
+[node name="Torso_mesh" type="MeshInstance3D" parent="PuppetRoot/PuppetBuilder/Torso"]
 mesh = SubResource("ArrayMesh_6wb03")
 skeleton = NodePath("")
 
-[node name="@CollisionShape3D@84740" type="CollisionShape3D" parent="PuppetRoot/PuppetBuilder/@RigidBody3D@84739"]
+[node name="Torso_collider" type="CollisionShape3D" parent="PuppetRoot/PuppetBuilder/Torso"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.067974746, 0)
 shape = SubResource("CapsuleShape3D_sweqy")
 
-[node name="@RigidBody3D@84741" type="RigidBody3D" parent="PuppetRoot/PuppetBuilder"]
+[node name="Shoulder_Joint_L" type="ConeTwistJoint3D" parent="PuppetRoot/PuppetBuilder/Torso"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.32100314, 0.3999999, 0)
+node_a = NodePath("/root/@EditorNode@20468/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@62/@VBoxContainer@63/@EditorMainScreen@103/MainScreen/@CanvasItemEditor@10871/@VSplitContainer@10516/@HSplitContainer@10518/@HSplitContainer@10520/@Control@10521/@SubViewportContainer@10522/@SubViewport@10523/Marionette/PuppetRoot/PuppetBuilder/Torso")
+node_b = NodePath("/root/@EditorNode@20468/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@62/@VBoxContainer@63/@EditorMainScreen@103/MainScreen/@CanvasItemEditor@10871/@VSplitContainer@10516/@HSplitContainer@10518/@HSplitContainer@10520/@Control@10521/@SubViewportContainer@10522/@SubViewport@10523/Marionette/PuppetRoot/PuppetBuilder/Torso/Shoulder_Joint_L/Arm_Upper_L")
+
+[node name="Arm_Upper_L" type="RigidBody3D" parent="PuppetRoot/PuppetBuilder/Torso/Shoulder_Joint_L"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.32100314, -0.3999999, 0)
 mass = 0.4658362
 script = ExtResource("3_sweqy")
-AttachOffset = Vector3(0.57550156, 0.46862045, 0)
 
-[node name="Arm_Upper_L" type="MeshInstance3D" parent="PuppetRoot/PuppetBuilder/@RigidBody3D@84741"]
+[node name="Arm_Upper_L_mesh" type="MeshInstance3D" parent="PuppetRoot/PuppetBuilder/Torso/Shoulder_Joint_L/Arm_Upper_L"]
 mesh = SubResource("ArrayMesh_ghl1y")
 skeleton = NodePath("")
 
-[node name="@CollisionShape3D@84742" type="CollisionShape3D" parent="PuppetRoot/PuppetBuilder/@RigidBody3D@84741"]
+[node name="Arm_Upper_L_collider" type="CollisionShape3D" parent="PuppetRoot/PuppetBuilder/Torso/Shoulder_Joint_L/Arm_Upper_L"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.57550156, 0.3999999, 0)
 shape = SubResource("CapsuleShape3D_2hs0m")
 
-[node name="@RigidBody3D@84743" type="RigidBody3D" parent="PuppetRoot/PuppetBuilder"]
+[node name="Elbow_Joint_L" type="HingeJoint3D" parent="PuppetRoot/PuppetBuilder/Torso/Shoulder_Joint_L/Arm_Upper_L"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8629629, 0.3999999, 0)
+node_a = NodePath("/root/@EditorNode@20468/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@62/@VBoxContainer@63/@EditorMainScreen@103/MainScreen/@CanvasItemEditor@10871/@VSplitContainer@10516/@HSplitContainer@10518/@HSplitContainer@10520/@Control@10521/@SubViewportContainer@10522/@SubViewport@10523/Marionette/PuppetRoot/PuppetBuilder/Torso/Shoulder_Joint_L/Arm_Upper_L")
+node_b = NodePath("/root/@EditorNode@20468/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@62/@VBoxContainer@63/@EditorMainScreen@103/MainScreen/@CanvasItemEditor@10871/@VSplitContainer@10516/@HSplitContainer@10518/@HSplitContainer@10520/@Control@10521/@SubViewportContainer@10522/@SubViewport@10523/Marionette/PuppetRoot/PuppetBuilder/Torso/Shoulder_Joint_L/Arm_Upper_L/Elbow_Joint_L/Arm_Lower_L")
+
+[node name="Arm_Lower_L" type="RigidBody3D" parent="PuppetRoot/PuppetBuilder/Torso/Shoulder_Joint_L/Arm_Upper_L/Elbow_Joint_L"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8629629, -0.3999999, 0)
 mass = 0.44213587
 script = ExtResource("3_sweqy")
-AttachOffset = Vector3(1.1064813, 0.4588175, 0)
 
-[node name="Arm_Lower_L" type="MeshInstance3D" parent="PuppetRoot/PuppetBuilder/@RigidBody3D@84743"]
+[node name="Arm_Lower_L_mesh" type="MeshInstance3D" parent="PuppetRoot/PuppetBuilder/Torso/Shoulder_Joint_L/Arm_Upper_L/Elbow_Joint_L/Arm_Lower_L"]
 mesh = SubResource("ArrayMesh_s3ed0")
 skeleton = NodePath("")
 
-[node name="@CollisionShape3D@84744" type="CollisionShape3D" parent="PuppetRoot/PuppetBuilder/@RigidBody3D@84743"]
+[node name="Arm_Lower_L_collider" type="CollisionShape3D" parent="PuppetRoot/PuppetBuilder/Torso/Shoulder_Joint_L/Arm_Upper_L/Elbow_Joint_L/Arm_Lower_L"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1064813, 0.3999999, 0)
 shape = SubResource("CapsuleShape3D_1jxqw")
 
-[node name="@RigidBody3D@84745" type="RigidBody3D" parent="PuppetRoot/PuppetBuilder"]
+[node name="Shoulder_Joint_R" type="ConeTwistJoint3D" parent="PuppetRoot/PuppetBuilder/Torso"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.32100284, 0.39999986, 0)
+node_a = NodePath("/root/@EditorNode@20468/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@62/@VBoxContainer@63/@EditorMainScreen@103/MainScreen/@CanvasItemEditor@10871/@VSplitContainer@10516/@HSplitContainer@10518/@HSplitContainer@10520/@Control@10521/@SubViewportContainer@10522/@SubViewport@10523/Marionette/PuppetRoot/PuppetBuilder/Torso")
+node_b = NodePath("/root/@EditorNode@20468/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@62/@VBoxContainer@63/@EditorMainScreen@103/MainScreen/@CanvasItemEditor@10871/@VSplitContainer@10516/@HSplitContainer@10518/@HSplitContainer@10520/@Control@10521/@SubViewportContainer@10522/@SubViewport@10523/Marionette/PuppetRoot/PuppetBuilder/Torso/Shoulder_Joint_R/Arm_Upper_R")
+
+[node name="Arm_Upper_R" type="RigidBody3D" parent="PuppetRoot/PuppetBuilder/Torso/Shoulder_Joint_R"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.32100284, -0.39999986, 0)
 mass = 0.4658362
 script = ExtResource("3_sweqy")
-AttachOffset = Vector3(-0.57550126, 0.46862042, 0)
 
-[node name="Arm_Upper_R" type="MeshInstance3D" parent="PuppetRoot/PuppetBuilder/@RigidBody3D@84745"]
+[node name="Arm_Upper_R_mesh" type="MeshInstance3D" parent="PuppetRoot/PuppetBuilder/Torso/Shoulder_Joint_R/Arm_Upper_R"]
 mesh = SubResource("ArrayMesh_f2ob0")
 skeleton = NodePath("")
 
-[node name="@CollisionShape3D@84746" type="CollisionShape3D" parent="PuppetRoot/PuppetBuilder/@RigidBody3D@84745"]
+[node name="Arm_Upper_R_collider" type="CollisionShape3D" parent="PuppetRoot/PuppetBuilder/Torso/Shoulder_Joint_R/Arm_Upper_R"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.57550126, 0.39999986, 0)
 shape = SubResource("CapsuleShape3D_dw050")
 
-[node name="@RigidBody3D@84747" type="RigidBody3D" parent="PuppetRoot/PuppetBuilder"]
+[node name="Elbow_Joint_R" type="HingeJoint3D" parent="PuppetRoot/PuppetBuilder/Torso/Shoulder_Joint_R/Arm_Upper_R"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8629625, 0.39999986, 0)
+node_a = NodePath("/root/@EditorNode@20468/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@62/@VBoxContainer@63/@EditorMainScreen@103/MainScreen/@CanvasItemEditor@10871/@VSplitContainer@10516/@HSplitContainer@10518/@HSplitContainer@10520/@Control@10521/@SubViewportContainer@10522/@SubViewport@10523/Marionette/PuppetRoot/PuppetBuilder/Torso/Shoulder_Joint_R/Arm_Upper_R")
+node_b = NodePath("/root/@EditorNode@20468/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@62/@VBoxContainer@63/@EditorMainScreen@103/MainScreen/@CanvasItemEditor@10871/@VSplitContainer@10516/@HSplitContainer@10518/@HSplitContainer@10520/@Control@10521/@SubViewportContainer@10522/@SubViewport@10523/Marionette/PuppetRoot/PuppetBuilder/Torso/Shoulder_Joint_R/Arm_Upper_R/Elbow_Joint_R/Arm_Lower_R")
+
+[node name="Arm_Lower_R" type="RigidBody3D" parent="PuppetRoot/PuppetBuilder/Torso/Shoulder_Joint_R/Arm_Upper_R/Elbow_Joint_R"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8629625, -0.39999986, 0)
 mass = 0.4421359
 script = ExtResource("3_sweqy")
-AttachOffset = Vector3(-1.106481, 0.45881748, 0)
 
-[node name="Arm_Lower_R" type="MeshInstance3D" parent="PuppetRoot/PuppetBuilder/@RigidBody3D@84747"]
+[node name="Arm_Lower_R_mesh" type="MeshInstance3D" parent="PuppetRoot/PuppetBuilder/Torso/Shoulder_Joint_R/Arm_Upper_R/Elbow_Joint_R/Arm_Lower_R"]
 mesh = SubResource("ArrayMesh_1ck0l")
 skeleton = NodePath("")
 
-[node name="@CollisionShape3D@84748" type="CollisionShape3D" parent="PuppetRoot/PuppetBuilder/@RigidBody3D@84747"]
+[node name="Arm_Lower_R_collider" type="CollisionShape3D" parent="PuppetRoot/PuppetBuilder/Torso/Shoulder_Joint_R/Arm_Upper_R/Elbow_Joint_R/Arm_Lower_R"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.106481, 0.39999986, 0)
 shape = SubResource("CapsuleShape3D_b26j0")
 
-[node name="@RigidBody3D@84749" type="RigidBody3D" parent="PuppetRoot/PuppetBuilder"]
+[node name="Neck_Joint" type="ConeTwistJoint3D" parent="PuppetRoot/PuppetBuilder/Torso"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.50121677, -0.02388385)
+node_a = NodePath("/root/@EditorNode@20468/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@62/@VBoxContainer@63/@EditorMainScreen@103/MainScreen/@CanvasItemEditor@10871/@VSplitContainer@10516/@HSplitContainer@10518/@HSplitContainer@10520/@Control@10521/@SubViewportContainer@10522/@SubViewport@10523/Marionette/PuppetRoot/PuppetBuilder/Torso")
+node_b = NodePath("/root/@EditorNode@20468/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@62/@VBoxContainer@63/@EditorMainScreen@103/MainScreen/@CanvasItemEditor@10871/@VSplitContainer@10516/@HSplitContainer@10518/@HSplitContainer@10520/@Control@10521/@SubViewportContainer@10522/@SubViewport@10523/Marionette/PuppetRoot/PuppetBuilder/Torso/Neck_Joint/Head")
+
+[node name="Head" type="RigidBody3D" parent="PuppetRoot/PuppetBuilder/Torso/Neck_Joint"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.50121677, 0.02388385)
 mass = 0.473946
 script = ExtResource("3_sweqy")
-AttachOffset = Vector3(0, 0.9212168, -0.02388385)
 
-[node name="Head" type="MeshInstance3D" parent="PuppetRoot/PuppetBuilder/@RigidBody3D@84749"]
+[node name="Head_mesh" type="MeshInstance3D" parent="PuppetRoot/PuppetBuilder/Torso/Neck_Joint/Head"]
 mesh = SubResource("ArrayMesh_5rg2b")
 skeleton = NodePath("")
 
-[node name="@CollisionShape3D@84750" type="CollisionShape3D" parent="PuppetRoot/PuppetBuilder/@RigidBody3D@84749"]
+[node name="Head_collider" type="CollisionShape3D" parent="PuppetRoot/PuppetBuilder/Torso/Neck_Joint/Head"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7212168, -0.02388385)
 shape = SubResource("CapsuleShape3D_n7ghd")
 
-[node name="_RigidBody3D_84751" type="RigidBody3D" parent="PuppetRoot/PuppetBuilder"]
+[node name="Hip_Joint_L" type="ConeTwistJoint3D" parent="PuppetRoot/PuppetBuilder/Torso"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.099999994, -0.51417017, 0)
+node_a = NodePath("/root/@EditorNode@20468/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@62/@VBoxContainer@63/@EditorMainScreen@103/MainScreen/@CanvasItemEditor@10871/@VSplitContainer@10516/@HSplitContainer@10518/@HSplitContainer@10520/@Control@10521/@SubViewportContainer@10522/@SubViewport@10523/Marionette/PuppetRoot/PuppetBuilder/Torso")
+node_b = NodePath("/root/@EditorNode@20468/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@62/@VBoxContainer@63/@EditorMainScreen@103/MainScreen/@CanvasItemEditor@10871/@VSplitContainer@10516/@HSplitContainer@10518/@HSplitContainer@10520/@Control@10521/@SubViewportContainer@10522/@SubViewport@10523/Marionette/PuppetRoot/PuppetBuilder/Torso/Hip_Joint_L/Leg_Upper_L")
+
+[node name="Leg_Upper_L" type="RigidBody3D" parent="PuppetRoot/PuppetBuilder/Torso/Hip_Joint_L"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.099999994, 0.51417017, 0)
 mass = 0.53428805
 script = ExtResource("3_sweqy")
-AttachOffset = Vector3(0.099999994, -0.4941702, 0)
 
-[node name="Leg_Upper_L" type="MeshInstance3D" parent="PuppetRoot/PuppetBuilder/_RigidBody3D_84751"]
+[node name="Leg_Upper_L_mesh" type="MeshInstance3D" parent="PuppetRoot/PuppetBuilder/Torso/Hip_Joint_L/Leg_Upper_L"]
 mesh = SubResource("ArrayMesh_s2jjj")
 skeleton = NodePath("")
 
-[node name="@CollisionShape3D@84752" type="CollisionShape3D" parent="PuppetRoot/PuppetBuilder/_RigidBody3D_84751"]
+[node name="Leg_Upper_L_collider" type="CollisionShape3D" parent="PuppetRoot/PuppetBuilder/Torso/Hip_Joint_L/Leg_Upper_L"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.099999994, -0.8120851, 0)
 shape = SubResource("CapsuleShape3D_nvl01")
 
-[node name="@RigidBody3D@84753" type="RigidBody3D" parent="PuppetRoot/PuppetBuilder"]
+[node name="Knee_Joint_L" type="HingeJoint3D" parent="PuppetRoot/PuppetBuilder/Torso/Hip_Joint_L/Leg_Upper_L"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.10000001, -1.1365589, 0)
+node_a = NodePath("/root/@EditorNode@20468/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@62/@VBoxContainer@63/@EditorMainScreen@103/MainScreen/@CanvasItemEditor@10871/@VSplitContainer@10516/@HSplitContainer@10518/@HSplitContainer@10520/@Control@10521/@SubViewportContainer@10522/@SubViewport@10523/Marionette/PuppetRoot/PuppetBuilder/Torso/Hip_Joint_L/Leg_Upper_L")
+node_b = NodePath("/root/@EditorNode@20468/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@62/@VBoxContainer@63/@EditorMainScreen@103/MainScreen/@CanvasItemEditor@10871/@VSplitContainer@10516/@HSplitContainer@10518/@HSplitContainer@10520/@Control@10521/@SubViewportContainer@10522/@SubViewport@10523/Marionette/PuppetRoot/PuppetBuilder/Torso/Hip_Joint_L/Leg_Upper_L/Knee_Joint_L/Leg_Lower_L")
+
+[node name="Leg_Lower_L" type="RigidBody3D" parent="PuppetRoot/PuppetBuilder/Torso/Hip_Joint_L/Leg_Upper_L/Knee_Joint_L"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.10000001, 1.1365589, 0)
 mass = 0.49243698
 script = ExtResource("3_sweqy")
-AttachOffset = Vector3(0.10000001, -1.1165589, 0)
 
-[node name="Leg_Lower_L" type="MeshInstance3D" parent="PuppetRoot/PuppetBuilder/@RigidBody3D@84753"]
+[node name="Leg_Lower_L_mesh" type="MeshInstance3D" parent="PuppetRoot/PuppetBuilder/Torso/Hip_Joint_L/Leg_Upper_L/Knee_Joint_L/Leg_Lower_L"]
 mesh = SubResource("ArrayMesh_o724f")
 skeleton = NodePath("")
 
-[node name="@CollisionShape3D@84754" type="CollisionShape3D" parent="PuppetRoot/PuppetBuilder/@RigidBody3D@84753"]
+[node name="Leg_Lower_L_collider" type="CollisionShape3D" parent="PuppetRoot/PuppetBuilder/Torso/Hip_Joint_L/Leg_Upper_L/Knee_Joint_L/Leg_Lower_L"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.10000001, -1.4132795, 0)
 shape = SubResource("CapsuleShape3D_ivps1")
 
-[node name="@RigidBody3D@84755" type="RigidBody3D" parent="PuppetRoot/PuppetBuilder"]
+[node name="Hip_Joint_R" type="ConeTwistJoint3D" parent="PuppetRoot/PuppetBuilder/Torso"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.09999998, -0.51417017, 0)
+node_a = NodePath("/root/@EditorNode@20468/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@62/@VBoxContainer@63/@EditorMainScreen@103/MainScreen/@CanvasItemEditor@10871/@VSplitContainer@10516/@HSplitContainer@10518/@HSplitContainer@10520/@Control@10521/@SubViewportContainer@10522/@SubViewport@10523/Marionette/PuppetRoot/PuppetBuilder/Torso")
+node_b = NodePath("/root/@EditorNode@20468/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@62/@VBoxContainer@63/@EditorMainScreen@103/MainScreen/@CanvasItemEditor@10871/@VSplitContainer@10516/@HSplitContainer@10518/@HSplitContainer@10520/@Control@10521/@SubViewportContainer@10522/@SubViewport@10523/Marionette/PuppetRoot/PuppetBuilder/Torso/Hip_Joint_R/Leg_Upper_R")
+
+[node name="Leg_Upper_R" type="RigidBody3D" parent="PuppetRoot/PuppetBuilder/Torso/Hip_Joint_R"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.09999998, 0.51417017, 0)
 mass = 0.53428805
 script = ExtResource("3_sweqy")
-AttachOffset = Vector3(-0.09999998, -0.4941702, 0)
 
-[node name="Leg_Upper_R" type="MeshInstance3D" parent="PuppetRoot/PuppetBuilder/@RigidBody3D@84755"]
+[node name="Leg_Upper_R_mesh" type="MeshInstance3D" parent="PuppetRoot/PuppetBuilder/Torso/Hip_Joint_R/Leg_Upper_R"]
 mesh = SubResource("ArrayMesh_l3sjg")
 skeleton = NodePath("")
 
-[node name="@CollisionShape3D@84756" type="CollisionShape3D" parent="PuppetRoot/PuppetBuilder/@RigidBody3D@84755"]
+[node name="Leg_Upper_R_collider" type="CollisionShape3D" parent="PuppetRoot/PuppetBuilder/Torso/Hip_Joint_R/Leg_Upper_R"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.09999998, -0.8120851, 0)
 shape = SubResource("CapsuleShape3D_urp6f")
 
-[node name="@RigidBody3D@84757" type="RigidBody3D" parent="PuppetRoot/PuppetBuilder"]
+[node name="Knee_Joint_R" type="HingeJoint3D" parent="PuppetRoot/PuppetBuilder/Torso/Hip_Joint_R/Leg_Upper_R"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.09999998, -1.1365589, 0)
+node_a = NodePath("/root/@EditorNode@20468/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@62/@VBoxContainer@63/@EditorMainScreen@103/MainScreen/@CanvasItemEditor@10871/@VSplitContainer@10516/@HSplitContainer@10518/@HSplitContainer@10520/@Control@10521/@SubViewportContainer@10522/@SubViewport@10523/Marionette/PuppetRoot/PuppetBuilder/Torso/Hip_Joint_R/Leg_Upper_R")
+node_b = NodePath("/root/@EditorNode@20468/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@62/@VBoxContainer@63/@EditorMainScreen@103/MainScreen/@CanvasItemEditor@10871/@VSplitContainer@10516/@HSplitContainer@10518/@HSplitContainer@10520/@Control@10521/@SubViewportContainer@10522/@SubViewport@10523/Marionette/PuppetRoot/PuppetBuilder/Torso/Hip_Joint_R/Leg_Upper_R/Knee_Joint_R/Leg_Lower_R")
+
+[node name="Leg_Lower_R" type="RigidBody3D" parent="PuppetRoot/PuppetBuilder/Torso/Hip_Joint_R/Leg_Upper_R/Knee_Joint_R"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.09999998, 1.1365589, 0)
 mass = 0.49243698
 script = ExtResource("3_sweqy")
-AttachOffset = Vector3(-0.09999998, -1.1165589, 0)
 
-[node name="Leg_Lower_R" type="MeshInstance3D" parent="PuppetRoot/PuppetBuilder/@RigidBody3D@84757"]
+[node name="Leg_Lower_R_mesh" type="MeshInstance3D" parent="PuppetRoot/PuppetBuilder/Torso/Hip_Joint_R/Leg_Upper_R/Knee_Joint_R/Leg_Lower_R"]
 mesh = SubResource("ArrayMesh_apejj")
 skeleton = NodePath("")
 
-[node name="@CollisionShape3D@84758" type="CollisionShape3D" parent="PuppetRoot/PuppetBuilder/@RigidBody3D@84757"]
+[node name="Leg_Lower_R_collider" type="CollisionShape3D" parent="PuppetRoot/PuppetBuilder/Torso/Hip_Joint_R/Leg_Upper_R/Knee_Joint_R/Leg_Lower_R"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.09999998, -1.4132795, 0)
 shape = SubResource("CapsuleShape3D_bwjto")
-
-[node name="_RigidBody3D_84741_to__RigidBody3D_84743_ctj" type="ConeTwistJoint3D" parent="PuppetRoot/PuppetBuilder"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.84099144, 0.39509842, 0)
-node_a = NodePath("/root/@EditorNode@20468/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@62/@VBoxContainer@63/@EditorMainScreen@103/MainScreen/@CanvasItemEditor@10871/@VSplitContainer@10516/@HSplitContainer@10518/@HSplitContainer@10520/@Control@10521/@SubViewportContainer@10522/@SubViewport@10523/Marionette/PuppetRoot/PuppetBuilder/@RigidBody3D@84741")
-node_b = NodePath("/root/@EditorNode@20468/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@62/@VBoxContainer@63/@EditorMainScreen@103/MainScreen/@CanvasItemEditor@10871/@VSplitContainer@10516/@HSplitContainer@10518/@HSplitContainer@10520/@Control@10521/@SubViewportContainer@10522/@SubViewport@10523/Marionette/PuppetRoot/PuppetBuilder/@RigidBody3D@84743")
-swing_span = 45.0
-twist_span = 25.0
-softness = 0.6
-
-[node name="_RigidBody3D_84745_to__RigidBody3D_84747_ctj" type="ConeTwistJoint3D" parent="PuppetRoot/PuppetBuilder"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.84099114, 0.3950984, 0)
-node_a = NodePath("/root/@EditorNode@20468/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@62/@VBoxContainer@63/@EditorMainScreen@103/MainScreen/@CanvasItemEditor@10871/@VSplitContainer@10516/@HSplitContainer@10518/@HSplitContainer@10520/@Control@10521/@SubViewportContainer@10522/@SubViewport@10523/Marionette/PuppetRoot/PuppetBuilder/@RigidBody3D@84745")
-node_b = NodePath("/root/@EditorNode@20468/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@62/@VBoxContainer@63/@EditorMainScreen@103/MainScreen/@CanvasItemEditor@10871/@VSplitContainer@10516/@HSplitContainer@10518/@HSplitContainer@10520/@Control@10521/@SubViewportContainer@10522/@SubViewport@10523/Marionette/PuppetRoot/PuppetBuilder/@RigidBody3D@84747")
-swing_span = 45.0
-twist_span = 25.0
-softness = 0.6
-
-[node name="_RigidBody3D_84751_to__RigidBody3D_84753_ctj" type="ConeTwistJoint3D" parent="PuppetRoot/PuppetBuilder"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, -1.1232795, 0)
-node_a = NodePath("../_RigidBody3D_84751")
-node_b = NodePath("/root/@EditorNode@20468/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@62/@VBoxContainer@63/@EditorMainScreen@103/MainScreen/@CanvasItemEditor@10871/@VSplitContainer@10516/@HSplitContainer@10518/@HSplitContainer@10520/@Control@10521/@SubViewportContainer@10522/@SubViewport@10523/Marionette/PuppetRoot/PuppetBuilder/@RigidBody3D@84753")
-swing_span = 45.0
-twist_span = 25.0
-softness = 0.6
-
-[node name="_RigidBody3D_84755_to__RigidBody3D_84757_ctj" type="ConeTwistJoint3D" parent="PuppetRoot/PuppetBuilder"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.09999998, -1.1232795, 0)
-node_a = NodePath("/root/@EditorNode@20468/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@62/@VBoxContainer@63/@EditorMainScreen@103/MainScreen/@CanvasItemEditor@10871/@VSplitContainer@10516/@HSplitContainer@10518/@HSplitContainer@10520/@Control@10521/@SubViewportContainer@10522/@SubViewport@10523/Marionette/PuppetRoot/PuppetBuilder/@RigidBody3D@84755")
-node_b = NodePath("/root/@EditorNode@20468/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@62/@VBoxContainer@63/@EditorMainScreen@103/MainScreen/@CanvasItemEditor@10871/@VSplitContainer@10516/@HSplitContainer@10518/@HSplitContainer@10520/@Control@10521/@SubViewportContainer@10522/@SubViewport@10523/Marionette/PuppetRoot/PuppetBuilder/@RigidBody3D@84757")
-swing_span = 45.0
-twist_span = 25.0
-softness = 0.6
-
-[node name="_RigidBody3D_84741_to__RigidBody3D_84743_hinge" type="HingeJoint3D" parent="PuppetRoot/PuppetBuilder"]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0.84099144, 0.39509842, 0)
-node_a = NodePath("/root/@EditorNode@20468/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@62/@VBoxContainer@63/@EditorMainScreen@103/MainScreen/@CanvasItemEditor@10871/@VSplitContainer@10516/@HSplitContainer@10518/@HSplitContainer@10520/@Control@10521/@SubViewportContainer@10522/@SubViewport@10523/Marionette/PuppetRoot/PuppetBuilder/@RigidBody3D@84741")
-node_b = NodePath("/root/@EditorNode@20468/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@62/@VBoxContainer@63/@EditorMainScreen@103/MainScreen/@CanvasItemEditor@10871/@VSplitContainer@10516/@HSplitContainer@10518/@HSplitContainer@10520/@Control@10521/@SubViewportContainer@10522/@SubViewport@10523/Marionette/PuppetRoot/PuppetBuilder/@RigidBody3D@84743")
-angular_limit/upper = 0.0
-angular_limit/lower = -90.0
-
-[node name="_RigidBody3D_84745_to__RigidBody3D_84747_hinge" type="HingeJoint3D" parent="PuppetRoot/PuppetBuilder"]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, -0.84099114, 0.3950984, 0)
-node_a = NodePath("/root/@EditorNode@20468/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@62/@VBoxContainer@63/@EditorMainScreen@103/MainScreen/@CanvasItemEditor@10871/@VSplitContainer@10516/@HSplitContainer@10518/@HSplitContainer@10520/@Control@10521/@SubViewportContainer@10522/@SubViewport@10523/Marionette/PuppetRoot/PuppetBuilder/@RigidBody3D@84745")
-node_b = NodePath("/root/@EditorNode@20468/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@62/@VBoxContainer@63/@EditorMainScreen@103/MainScreen/@CanvasItemEditor@10871/@VSplitContainer@10516/@HSplitContainer@10518/@HSplitContainer@10520/@Control@10521/@SubViewportContainer@10522/@SubViewport@10523/Marionette/PuppetRoot/PuppetBuilder/@RigidBody3D@84747")
-angular_limit/upper = 0.0
-angular_limit/lower = -90.0
-
-[node name="_RigidBody3D_84751_to__RigidBody3D_84753_hinge" type="HingeJoint3D" parent="PuppetRoot/PuppetBuilder"]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0.1, -1.1232795, 0)
-node_a = NodePath("../_RigidBody3D_84751")
-node_b = NodePath("/root/@EditorNode@20468/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@62/@VBoxContainer@63/@EditorMainScreen@103/MainScreen/@CanvasItemEditor@10871/@VSplitContainer@10516/@HSplitContainer@10518/@HSplitContainer@10520/@Control@10521/@SubViewportContainer@10522/@SubViewport@10523/Marionette/PuppetRoot/PuppetBuilder/@RigidBody3D@84753")
-angular_limit/upper = 0.0
-angular_limit/lower = -90.0
-
-[node name="_RigidBody3D_84755_to__RigidBody3D_84757_hinge" type="HingeJoint3D" parent="PuppetRoot/PuppetBuilder"]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, -0.09999998, -1.1232795, 0)
-node_a = NodePath("/root/@EditorNode@20468/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@62/@VBoxContainer@63/@EditorMainScreen@103/MainScreen/@CanvasItemEditor@10871/@VSplitContainer@10516/@HSplitContainer@10518/@HSplitContainer@10520/@Control@10521/@SubViewportContainer@10522/@SubViewport@10523/Marionette/PuppetRoot/PuppetBuilder/@RigidBody3D@84755")
-node_b = NodePath("/root/@EditorNode@20468/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@62/@VBoxContainer@63/@EditorMainScreen@103/MainScreen/@CanvasItemEditor@10871/@VSplitContainer@10516/@HSplitContainer@10518/@HSplitContainer@10520/@Control@10521/@SubViewportContainer@10522/@SubViewport@10523/Marionette/PuppetRoot/PuppetBuilder/@RigidBody3D@84757")
-angular_limit/upper = 0.0
-angular_limit/lower = -90.0

@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://x58h8kr2aifu"]
 
-[ext_resource type="PackedScene" uid="uid://bre84curdglv4" path="res://player.tscn" id="1_ig7tw"]
+[ext_resource type="PackedScene" uid="uid://b2pps55soih37" path="res://marionette.tscn" id="1_ig7tw"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_7dm0k"]
 
@@ -16,6 +16,7 @@ heightmap_scale = -16.0
 [node name="Node3D" type="Node3D"]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.4381406, 0)
 physics_material_override = SubResource("PhysicsMaterial_7dm0k")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
@@ -26,9 +27,9 @@ surface_material_override/0 = SubResource("StandardMaterial3D_0xm2m")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
 shape = SubResource("WorldBoundaryShape3D_h2yge")
 
-[node name="Marionette" parent="." instance=ExtResource("1_ig7tw")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.37413538, 1.6981516, -0.071680546)
-
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
 omni_range = 16.0
+
+[node name="marionette" parent="." instance=ExtResource("1_ig7tw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.25019693, 0.18806756, -3.038271)
