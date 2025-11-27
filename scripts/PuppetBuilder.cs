@@ -1,191 +1,224 @@
-// res://scripts/PuppetBuilder.cs
+// PuppetBuilder.cs
 using Godot;
 using System;
 using System.Collections.Generic;
 
-
 [Tool]
 public partial class PuppetBuilder : Node3D
 {
-	[Export(PropertyHint.File, "*.glb,*.gltf")] public string GlbPath = "/mnt/data/marionette.glb";
-	[Export] public bool AutoBuildOnReady = true;
-	[Export] public bool DebugDrawAabbs = false;
-	[Export] public float JointOffset = 0f;
-	[ExportToolButton("Build puppet")] public Callable BuildButton => Callable.From(BuildFromGlb);
-	[ExportToolButton("Clear puppet")] public Callable ClearButton => Callable.From(ClearChildren);
+	[Export(PropertyHint.File, "*.glb,*.gltf")]
+	public string GlbPath;
 
-	// Naming helpers (adjust if your GLB uses different names)
+	[Export] public bool AutoBuildOnReady = false;
+	[Export] public float JointOffset = 0.02f;
+	[ExportToolButton("Build puppet")] public Callable BuildButton => Callable.From(Build);
+	[ExportToolButton("Clear puppet")] public Callable ClearButton => Callable.From(Clear);
 
-	private enum LimbType { Torso, Head, Arm, Leg };
-	private enum SegmentType { Upper, Lower };
-	private enum Side { L, R, B, T };
+	private enum Side {L, R, T, B};
 
-	private LimbType ParseLimbType(string name)
-	{
-		string prefix = name.Split("_")[0];
-		return Enum.Parse<LimbType>(prefix);
-	}
-	private SegmentType? ParseSegmentType(string name)
-	{
-		string[] splitList = name.Split("_");
-		if (splitList.Length < 2) return null;
-		string prefix = splitList[1];
-		return Enum.Parse<SegmentType>(prefix);
-	}
-	private Side? ParseSide(string name)
-	{
-		string[] splitList = name.Split("_");
-		if (splitList.Length < 3) return null;
-		string prefix = splitList[2];
-		return Enum.Parse<Side>(prefix);
-	}
-
+	// -----------------------------------------------------
+	// SAFE EDITOR ENTRY
+	// -----------------------------------------------------
 	public override void _Ready()
 	{
-		if (Engine.IsEditorHint())
-			return;
+		// if (!Engine.IsEditorHint()) return;
 
+		GD.Print($"Build on ready: {AutoBuildOnReady}, glb path: {GlbPath}");
 		if (AutoBuildOnReady && !string.IsNullOrEmpty(GlbPath))
-		{
-			// Build inside editor so you can inspect result
-			BuildFromGlb();
-		}
+			GD.Print("Building");
+			Build();
 	}
 
-	public override void _Process(double delta)
+	// -----------------------------------------------------
+	// MAIN BUILD
+	// -----------------------------------------------------
+	public void Build()
 	{
-		if (!Engine.IsEditorHint() || !DebugDrawAabbs)
-			return;
-		foreach (var child in GetChildren())
+		if (string.IsNullOrEmpty(GlbPath))
 		{
-			var mesh = child.GetChild<MeshInstance3D>(0);
-			var aabb = GetMeshAabb(mesh);
-			DebugDraw3D.DrawAabb(aabb);
-		}
-
-	}
-
-	private void AddChildAndSetOwner(Node3D child, Node3D parent = null)
-	{
-		if (parent == null)
-		{
-			AddChild(child);
-		}
-		else if (child.GetParent() != null)
-		{
-			child.Reparent(parent);
-		}
-		else
-		{
-			parent.AddChild(child);
-		}
-		child.Owner = GetTree().EditedSceneRoot;
-	}
-
-	public void BuildFromGlb(string filePath)
-	{
-		if (!FileAccess.FileExists(filePath))
-		{
-			GD.PrintErr($"GLB not found: {filePath}");
+			GD.PrintErr("No GLB path specified!");
 			return;
 		}
 
-		ClearChildren();
+		Clear();
 
-		var packed = ResourceLoader.Load<PackedScene>(filePath);
-		var model = packed.Instantiate() as Node3D;
+		PackedScene src = ResourceLoader.Load<PackedScene>(GlbPath);
+		if (src == null) { GD.PrintErr("Failed to load GLB"); return; }
 
-		// Collect all MeshInstance3D nodes under model
-		var meshes = new List<MeshInstance3D>();
-		CollectMeshesRecursive(model, meshes);
+		Node3D glbRoot = src.Instantiate<Node3D>();
 
-		// Create a Limb for each mesh, and store in limbs dict
+		// Collect all mesh instances
+		List<MeshInstance3D> meshes = new();
+		CollectMeshes(glbRoot, meshes);
+
+		Dictionary<string, MarionetteLimb> limbs = new();
+
+		// -----------------------------------------------------
+		// 1. Create limbs
+		// -----------------------------------------------------
 		foreach (var mesh in meshes)
 		{
 			var limb = new MarionetteLimb();
+			limb.Name = mesh.Name;
+			AddChild(limb);
+			limb.Owner = GetTree().EditedSceneRoot;
 
-			// Rename stuff
-			var meshName = mesh.Name;
-			mesh.Name = meshName + "_mesh";
-			limb.Name = meshName;
+			// Reparent mesh into limb, preserving transform
+			mesh.Name = limb.Name + "_mesh";
+			// limb.AddChild(mesh);
+			mesh.Reparent(limb);
+			mesh.Owner = GetTree().EditedSceneRoot;
 
-			AddChildAndSetOwner(limb);
-			limb.UniqueNameInOwner = true;
-			AddChildAndSetOwner(mesh, limb);
+			// generate collider
+			var aabb = GetTransformedAabb(mesh);
+			var coll = MakeCapsuleFromAabb(aabb);
+			coll.Name = limb.Name + "_collider";
+			limb.AddChild(coll);
+			coll.Owner = GetTree().EditedSceneRoot;
 
-			var aabb = GetMeshAabb(mesh);
-			var coll = MakeCollisionForAabb(aabb);
-			coll.Name = meshName + "_collider";
-
-			AddChildAndSetOwner(coll, limb);
-
-			float approxMass = Mathf.Clamp(aabb.Size.Length() * 0.8f, 0.3f, 6f);
-			limb.Mass = approxMass;
+			limbs[limb.Name] = limb;
 		}
 
-
-		// Now create joints between upper/lower pairs (arms & legs)
-		foreach (MarionetteLimb limb in GetChildren())
+		// -----------------------------------------------------
+		// 2. Create joints
+		// -----------------------------------------------------
+		foreach (var limb in limbs.Values)
 		{
-			string nodeName = limb.Name;
-			var type = ParseLimbType(nodeName);
-			var segment = ParseSegmentType(nodeName);
-			var side = ParseSide(nodeName);
+			string name = limb.Name;
 
-			if (type == LimbType.Torso) continue;
+			if (name.StartsWith("Head"))
+				BuildNeckJoint(limb, limbs["Torso"]);
 
-			GD.Print($"Type: {type}, segment: {segment}, side: {side}");
+			else if (name.StartsWith("Arm_Upper"))
+				BuildShoulderJoint(limb, limbs["Torso"]);
 
-			var torsoNode = GetNode<MarionetteLimb>("Torso");
+			else if (name.StartsWith("Arm_Lower"))
+				BuildElbowJoint(limb, limbs[name.Replace("Lower", "Upper")]);
 
-			if (type == LimbType.Head)
-			{
-				var joint = new ConeTwistJoint3D();
-				AddChildAndSetOwner(joint, torsoNode);
-				MoveJointToLimb(joint, limb, Side.B);
-				AddChildAndSetOwner(limb, joint);
-				joint.Name = "Neck_Joint";
-				joint.NodeA = torsoNode.GetPath();
-				joint.NodeB = limb.GetPath();
-			}
-			else if (segment == SegmentType.Upper)
-			{
-				var joint = new ConeTwistJoint3D();
-				AddChildAndSetOwner(joint, torsoNode);
-				var joint_side = type == LimbType.Arm ? side : Side.T;
-				MoveJointToLimb(joint, limb, joint_side);
-				AddChildAndSetOwner(limb, joint);
-				joint.Name = type == LimbType.Arm ? $"Shoulder_Joint_{side}" : $"Hip_Joint_{side}";
-				joint.NodeA = torsoNode.GetPath();
-				joint.NodeB = limb.GetPath();
-			}
-			else if (segment == SegmentType.Lower)
-			{
-				var upperName = limb.Name.ToString().Replace("Lower", "Upper");
-				var upperLimb = torsoNode.GetNode<MarionetteLimb>("%" + upperName);
-				var joint = new HingeJoint3D();
-				AddChildAndSetOwner(joint, upperLimb);
-				var joint_side = type == LimbType.Arm ? side : Side.T;
-				MoveJointToLimb(joint, limb, joint_side);
-				AddChildAndSetOwner(limb, joint);
-				joint.Name = type == LimbType.Arm ? $"Elbow_Joint_{side}" : $"Knee_Joint_{side}";
-				joint.NodeA = upperLimb.GetPath();
-				joint.NodeB = limb.GetPath();
-			}
-			else
-			{
-				throw new Exception("Invalid limb");
-			}
+			else if (name.StartsWith("Leg_Upper"))
+				BuildHipJoint(limb, limbs["Torso"]);
+
+			else if (name.StartsWith("Leg_Lower"))
+				BuildKneeJoint(limb, limbs[name.Replace("Lower", "Upper")]);
 		}
-		GD.Print("PuppetBuilder finished. Inspect generated limbs & joints under the PuppetBuilder node.");
+
+		GD.Print("Puppet build complete.");
 	}
 
-	public void BuildFromGlb()
+	// -----------------------------------------------------
+	// COLLISION SHAPES
+	// -----------------------------------------------------
+	private CollisionShape3D MakeCapsuleFromAabb(Aabb aabb)
 	{
-		BuildFromGlb(GlbPath);
+		var cs = new CollisionShape3D();
+		var cap = new CapsuleShape3D();
+
+		// choose main axis = tallest dimension
+		float x = aabb.Size.X;
+		float y = aabb.Size.Y;
+		float z = aabb.Size.Z;
+
+		// default orientation = Y axis
+		cap.Radius = Mathf.Max(x, z) * 0.5f;
+		cap.Height = Mathf.Max(0.001f, y - 2f * cap.Radius);
+
+		cs.Shape = cap;
+
+		// center to AABB
+		Vector3 center = aabb.Position + aabb.Size * 0.5f;
+		cs.Transform = new Transform3D(Basis.Identity, center);
+
+		return cs;
 	}
 
-	private void MoveJointToLimb(Joint3D joint, MarionetteLimb limb, Side? side)
+	// -----------------------------------------------------
+	// JOINT HELPERS
+	// -----------------------------------------------------
+	private void BuildNeckJoint(MarionetteLimb head, MarionetteLimb torso)
+	{
+		var joint = new ConeTwistJoint3D();
+		AddChild(joint);
+		joint.Name = "Neck_Joint";
+		joint.Owner = GetTree().EditedSceneRoot;
+
+		joint.NodeA = torso.GetPath();
+		joint.NodeB = head.GetPath();
+
+		var p = GetCorrectJointPosition(head, Side.B);
+		joint.GlobalPosition = p;
+	}
+
+	private void BuildShoulderJoint(MarionetteLimb armUpper, MarionetteLimb torso)
+	{
+		var joint = new ConeTwistJoint3D();
+		AddChild(joint);
+		joint.Name = armUpper.Name.ToString().Replace("Arm_Upper", "Shoulder_Joint"); // Joint name = Arm_Upper_L
+		joint.Owner = GetTree().EditedSceneRoot;
+
+		joint.NodeA = torso.GetPath();
+		joint.NodeB = armUpper.GetPath();
+
+		var sideString = joint.Name.ToString().Split("_")[2];
+		var side = Enum.Parse<Side>(sideString);
+		var p = GetCorrectJointPosition(armUpper, side);
+		joint.GlobalPosition = p;
+	}
+
+	private void BuildElbowJoint(MarionetteLimb lower, MarionetteLimb upper)
+	{
+		var joint = new HingeJoint3D();
+		AddChild(joint);
+		joint.Name = lower.Name.ToString().Replace("Arm_Lower", "Elbow_Joint");
+		joint.Owner = GetTree().EditedSceneRoot;
+
+		joint.NodeA = upper.GetPath();
+		joint.NodeB = lower.GetPath();
+
+		// joint.GlobalPosition = FindSurfacePointBetween(upper, lower);
+		// joint.RotationDegrees = new Vector3(90, 0, 0);
+		var sideString = joint.Name.ToString().Split("_")[2];
+		var side = Enum.Parse<Side>(sideString);
+		var p = GetCorrectJointPosition(lower, side);
+		joint.GlobalPosition = p;
+
+		joint.SetParam(HingeJoint3D.Param.LimitLower, -105);
+		joint.SetParam(HingeJoint3D.Param.LimitUpper, 0);
+	}
+
+	private void BuildHipJoint(MarionetteLimb legUpper, MarionetteLimb torso)
+	{
+		var joint = new ConeTwistJoint3D();
+		AddChild(joint);
+		joint.Name = legUpper.Name.ToString().Replace("Leg_Lower", "Hip_Joint");
+		joint.Owner = GetTree().EditedSceneRoot;
+
+		joint.NodeA = torso.GetPath();
+		joint.NodeB = legUpper.GetPath();
+
+		var p = GetCorrectJointPosition(legUpper, Side.T);
+		joint.GlobalPosition = p;
+	}
+
+	private void BuildKneeJoint(MarionetteLimb lower, MarionetteLimb upper)
+	{
+		var joint = new HingeJoint3D();
+		AddChild(joint);
+		joint.Owner = GetTree().EditedSceneRoot;
+		joint.Name = lower.Name.ToString().Replace("Leg_Lower", "Knee_Joint");
+
+		joint.NodeA = upper.GetPath();
+		joint.NodeB = lower.GetPath();
+
+		// joint.GlobalPosition = FindSurfacePointBetween(upper, lower);
+		// joint.RotationDegrees = new Vector3(90, 0, 0);
+		var p = GetCorrectJointPosition(lower, Side.T);
+		joint.GlobalPosition = p;
+
+		joint.SetParam(HingeJoint3D.Param.LimitLower, -105);
+		joint.SetParam(HingeJoint3D.Param.LimitUpper, 0);
+	}
+
+	private Vector3 GetCorrectJointPosition(MarionetteLimb limb, Side? side)
 	{
 		var mesh = limb.GetChild<MeshInstance3D>(0);
 		var aabb = mesh.Mesh.GetAabb();
@@ -213,58 +246,58 @@ public partial class PuppetBuilder : Node3D
 				new_pos.Y += aabb.Size.Y - JointOffset;
 				break;
 		}
-		joint.GlobalPosition = new_pos;
+		return new_pos;
+	}
+	
+	// -----------------------------------------------------
+	// AABB EXTRACTION
+	// -----------------------------------------------------
+	private Aabb GetTransformedAabb(MeshInstance3D mesh)
+	{
+		if (mesh.Mesh == null)
+			return new Aabb(mesh.GlobalPosition, Vector3.One * 0.01f);
+
+		var local = mesh.Mesh.GetAabb();
+		Transform3D xf = mesh.Transform;
+
+		Vector3[] corners = new Vector3[8];
+		corners[0] = local.Position;
+		corners[1] = local.Position + new Vector3(local.Size.X, 0, 0);
+		corners[2] = local.Position + new Vector3(0, local.Size.Y, 0);
+		corners[3] = local.Position + new Vector3(0, 0, local.Size.Z);
+		corners[4] = local.Position + local.Size;
+		corners[5] = local.Position + new Vector3(local.Size.X, local.Size.Y, 0);
+		corners[6] = local.Position + new Vector3(local.Size.X, 0, local.Size.Z);
+		corners[7] = local.Position + new Vector3(0, local.Size.Y, local.Size.Z);
+
+		for (int i = 0; i < 8; i++)
+			corners[i] = xf * corners[i];
+
+		Aabb res = new Aabb(corners[0], Vector3.Zero);
+		for (int i = 1; i < 8; i++)
+			res = res.Expand(corners[i]);
+
+		return res;
 	}
 
-	public void ClearChildren()
+	private void CollectMeshes(Node node, List<MeshInstance3D> list)
 	{
-		foreach (var child in GetChildren())
+		foreach (Node child in node.GetChildren())
 		{
+			if (child is MeshInstance3D mi)
+				list.Add(mi);
+
+			if (child is Node3D n3)
+				CollectMeshes(n3, list);
+		}
+	}
+
+	// -----------------------------------------------------
+	// CLEAN
+	// -----------------------------------------------------
+	public void Clear()
+	{
+		foreach (Node child in GetChildren())
 			child.QueueFree();
-		}
-	}
-	// Collect all MeshInstance3D nodes recursively
-	private void CollectMeshesRecursive(Node3D n, List<MeshInstance3D> outList)
-	{
-		foreach (var child in n.GetChildren())
-		{
-			if (child is MeshInstance3D m)
-			{
-				outList.Add(m);
-				CollectMeshesRecursive(m, outList);
-			}
-			else if (child is Node3D nd)
-			{
-				CollectMeshesRecursive(nd, outList);
-			}
-		}
-	}
-
-	private Aabb GetMeshAabb(MeshInstance3D m)
-	{
-		if (m.Mesh == null) return new Aabb(Vector3.Zero, Vector3.Zero);
-		var a = m.Mesh.GetAabb();
-		// The mesh AABB is in mesh-local coordinates; we return it so builder uses it to construct collision shape
-		return a;
-	}
-
-	private CollisionShape3D MakeCollisionForAabb(Aabb aabb)
-	{
-		// approximate shape using capsule oriented on Y
-		var cs = new CollisionShape3D();
-		var cap = new CapsuleShape3D();
-
-		float radius = Math.Max(aabb.Size.X, aabb.Size.Z) * 0.5f;
-		float height = Math.Max(0.02f, aabb.Size.Y - 2f * radius);
-		cap.Radius = radius;
-		cap.Height = Math.Max(0.001f, height);
-
-		cs.Shape = cap;
-
-		// collision transform: put center at aabb center
-		var centerLocal = aabb.Position + aabb.Size * 0.5f;
-		cs.Transform = new Transform3D(Basis.Identity, centerLocal);
-
-		return cs;
 	}
 }
