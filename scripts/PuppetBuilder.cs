@@ -46,6 +46,7 @@ public partial class PuppetBuilder : Node3D
 		if (src == null) { GD.PrintErr("Failed to load GLB"); return; }
 
 		Node3D glbRoot = src.Instantiate<Node3D>();
+		AddChild(glbRoot);
 
 		// Collect all mesh instances
 		List<MeshInstance3D> meshes = new();
@@ -65,8 +66,9 @@ public partial class PuppetBuilder : Node3D
 
 			// Reparent mesh into limb, preserving transform
 			mesh.Name = limb.Name + "_mesh";
-			// limb.AddChild(mesh);
 			mesh.Reparent(limb);
+			// limb.AddChild(mesh);
+			// mesh.Reparent(limb);
 			mesh.Owner = GetTree().EditedSceneRoot;
 
 			// generate collider
@@ -78,6 +80,7 @@ public partial class PuppetBuilder : Node3D
 
 			limbs[limb.Name] = limb;
 		}
+		glbRoot.QueueFree();
 
 		// -----------------------------------------------------
 		// 2. Create joints

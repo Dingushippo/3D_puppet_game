@@ -54,4 +54,3 @@ StringRightFootPath = NodePath("../StringsRoot/String_RightFoot")
 [node name="PuppetBuilder" type="Node3D" parent="PuppetRoot"]
 script = ExtResource("4_hqtel")
 GlbPath = "uid://4d0tplam3cfv"
-AutoBuildOnReady = true

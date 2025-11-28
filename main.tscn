@@ -1,6 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://x58h8kr2aifu"]
-
-[ext_resource type="PackedScene" uid="uid://bre84curdglv4" path="res://player.tscn" id="1_ig7tw"]
+[gd_scene load_steps=8 format=3 uid="uid://x58h8kr2aifu"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ig7tw"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -45,9 +43,6 @@ surface_material_override/0 = SubResource("StandardMaterial3D_0xm2m")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
 shape = SubResource("WorldBoundaryShape3D_h2yge")
-
-[node name="Marionette" parent="." instance=ExtResource("1_ig7tw")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.10023832, 6.9538484, -2.407794)
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.9659259, 0.25881907, 0, -0.25881907, 0.9659258, 0, 3, 4)
