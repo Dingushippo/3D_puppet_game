@@ -9,7 +9,6 @@
 [node name="StringsRoot" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 script = ExtResource("1_i3pqv")
-debug = false
 TorsoTargetPath = NodePath("String_Torso")
 HeadTargetPath = NodePath("String_Head")
 LeftHandTargetPath = NodePath("String_LeftHand")

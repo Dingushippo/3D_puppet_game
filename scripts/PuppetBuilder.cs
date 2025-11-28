@@ -21,9 +21,9 @@ public partial class PuppetBuilder : Node3D
 	// -----------------------------------------------------
 	public override void _Ready()
 	{
-		// if (!Engine.IsEditorHint()) return;
+		if (Engine.IsEditorHint()) return;
 
-		GD.Print($"Build on ready: {AutoBuildOnReady}, glb path: {GlbPath}");
+		// GD.Print($"Build on ready: {AutoBuildOnReady}, glb path: {GlbPath}");
 		if (AutoBuildOnReady && !string.IsNullOrEmpty(GlbPath))
 			GD.Print("Building");
 			Build();
@@ -88,6 +88,7 @@ public partial class PuppetBuilder : Node3D
 		foreach (var limb in limbs.Values)
 		{
 			string name = limb.Name;
+			GD.Print("Creating joint for limb: " + name);
 
 			if (name.StartsWith("Head"))
 				BuildNeckJoint(limb, limbs["Torso"]);
@@ -149,6 +150,11 @@ public partial class PuppetBuilder : Node3D
 
 		var p = GetCorrectJointPosition(head, Side.B);
 		joint.GlobalPosition = p;
+
+		// TODO remove
+		head.Freeze = true;
+		head.FreezeMode = RigidBody3D.FreezeModeEnum.Static;
+		GD.Print("Head frozen for testing");
 	}
 
 	private void BuildShoulderJoint(MarionetteLimb armUpper, MarionetteLimb torso)
@@ -165,6 +171,7 @@ public partial class PuppetBuilder : Node3D
 		var side = Enum.Parse<Side>(sideString);
 		var p = GetCorrectJointPosition(armUpper, side);
 		joint.GlobalPosition = p;
+		GD.Print($"Shoulder joint position: {p}");
 	}
 
 	private void BuildElbowJoint(MarionetteLimb lower, MarionetteLimb upper)
@@ -186,6 +193,7 @@ public partial class PuppetBuilder : Node3D
 
 		joint.SetParam(HingeJoint3D.Param.LimitLower, -105);
 		joint.SetParam(HingeJoint3D.Param.LimitUpper, 0);
+		GD.Print($"Elbow joint position: {p}");
 	}
 
 	private void BuildHipJoint(MarionetteLimb legUpper, MarionetteLimb torso)
@@ -200,6 +208,7 @@ public partial class PuppetBuilder : Node3D
 
 		var p = GetCorrectJointPosition(legUpper, Side.T);
 		joint.GlobalPosition = p;
+		GD.Print($"Hip joint position: {p}");
 	}
 
 	private void BuildKneeJoint(MarionetteLimb lower, MarionetteLimb upper)
@@ -219,6 +228,7 @@ public partial class PuppetBuilder : Node3D
 
 		joint.SetParam(HingeJoint3D.Param.LimitLower, -105);
 		joint.SetParam(HingeJoint3D.Param.LimitUpper, 0);
+		GD.Print($"Knee joint position: {p}");
 	}
 
 	private Vector3 GetCorrectJointPosition(MarionetteLimb limb, Side? side)
