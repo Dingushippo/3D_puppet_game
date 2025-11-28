@@ -13,6 +13,7 @@ public partial class PuppetBuilder : Node3D
 	[Export] public float JointOffset = 0.02f;
 	[ExportToolButton("Build puppet")] public Callable BuildButton => Callable.From(Build);
 	[ExportToolButton("Clear puppet")] public Callable ClearButton => Callable.From(Clear);
+	[Export] public bool DebugJoints = false;
 
 	private enum Side {L, R, T, B};
 
@@ -21,12 +22,21 @@ public partial class PuppetBuilder : Node3D
 	// -----------------------------------------------------
 	public override void _Ready()
 	{
-		if (Engine.IsEditorHint()) return;
+		// if (Engine.IsEditorHint()) return;
 
-		// GD.Print($"Build on ready: {AutoBuildOnReady}, glb path: {GlbPath}");
 		if (AutoBuildOnReady && !string.IsNullOrEmpty(GlbPath))
-			GD.Print("Building");
+        {
+            GD.Print("Building");
 			Build();
+        }
+	}
+
+	public override void _Process(double delta)
+	{
+		if (DebugJoints)
+		{
+			DebugJointPositions();
+		}
 	}
 
 	// -----------------------------------------------------
@@ -59,26 +69,30 @@ public partial class PuppetBuilder : Node3D
 		// -----------------------------------------------------
 		foreach (var mesh in meshes)
 		{
+			var originalGlobal = mesh.GlobalTransform;
+			var baseName = mesh.Mesh.ResourceName.Replace("marionette_", "");
+
 			var limb = new MarionetteLimb();
-			limb.Name = mesh.Name;
+			limb.Name = baseName; 
 			AddChild(limb);
+			limb.GlobalTransform = originalGlobal;
 			limb.Owner = GetTree().EditedSceneRoot;
 
 			// Reparent mesh into limb, preserving transform
-			mesh.Name = limb.Name + "_mesh";
-			mesh.Reparent(limb);
-			// limb.AddChild(mesh);
-			// mesh.Reparent(limb);
+			mesh.Name = baseName + "_mesh";
+			mesh.Reparent(limb, false);
+			mesh.Transform = Transform3D.Identity;   // reset inside the limb
 			mesh.Owner = GetTree().EditedSceneRoot;
 
 			// generate collider
-			var aabb = GetTransformedAabb(mesh);
+			// var aabb = GetTransformedAabb(mesh);
+			var aabb = mesh.Mesh.GetAabb();
 			var coll = MakeCapsuleFromAabb(aabb);
-			coll.Name = limb.Name + "_collider";
+			coll.Name = baseName + "_collider";
 			limb.AddChild(coll);
 			coll.Owner = GetTree().EditedSceneRoot;
 
-			limbs[limb.Name] = limb;
+			limbs[baseName] = limb;
 		}
 		glbRoot.QueueFree();
 
@@ -184,8 +198,6 @@ public partial class PuppetBuilder : Node3D
 		joint.NodeA = upper.GetPath();
 		joint.NodeB = lower.GetPath();
 
-		// joint.GlobalPosition = FindSurfacePointBetween(upper, lower);
-		// joint.RotationDegrees = new Vector3(90, 0, 0);
 		var sideString = joint.Name.ToString().Split("_")[2];
 		var side = Enum.Parse<Side>(sideString);
 		var p = GetCorrectJointPosition(lower, side);
@@ -221,8 +233,6 @@ public partial class PuppetBuilder : Node3D
 		joint.NodeA = upper.GetPath();
 		joint.NodeB = lower.GetPath();
 
-		// joint.GlobalPosition = FindSurfacePointBetween(upper, lower);
-		// joint.RotationDegrees = new Vector3(90, 0, 0);
 		var p = GetCorrectJointPosition(lower, Side.T);
 		joint.GlobalPosition = p;
 
@@ -259,7 +269,7 @@ public partial class PuppetBuilder : Node3D
 				new_pos.Y += aabb.Size.Y - JointOffset;
 				break;
 		}
-		return new_pos;
+		return mesh.GlobalTransform * new_pos;
 	}
 	
 	// -----------------------------------------------------
@@ -312,5 +322,19 @@ public partial class PuppetBuilder : Node3D
 	{
 		foreach (Node child in GetChildren())
 			child.QueueFree();
+	}
+
+	// -----------------------------------------------------
+	// Debug
+	// -----------------------------------------------------
+	private void DebugJointPositions()
+	{
+		foreach (var child in GetChildren())
+		{
+			if (child is Joint3D joint)
+			{
+				DebugDraw3D.DrawSphere(joint.GlobalPosition, 0.02f, Colors.Red, 5.0f);
+			}
+		}
 	}
 }

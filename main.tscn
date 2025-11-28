@@ -1,6 +1,6 @@
 [gd_scene load_steps=9 format=3 uid="uid://x58h8kr2aifu"]
 
-[ext_resource type="PackedScene" uid="uid://h3nu8famje7v" path="res://Marionette2.tscn" id="1_ig7tw"]
+[ext_resource type="PackedScene" uid="uid://bre84curdglv4" path="res://Marionette.tscn" id="1_ig7tw"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ig7tw"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -47,7 +47,7 @@ surface_material_override/0 = SubResource("StandardMaterial3D_0xm2m")
 shape = SubResource("WorldBoundaryShape3D_h2yge")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.9659259, 0.25881907, 0, -0.25881907, 0.9659258, 0, 3, 4)
+transform = Transform3D(0.96578115, -0.06712692, 0.25052103, 0, 0.9659259, 0.25881907, -0.25935847, -0.24996258, 0.93287295, 1.111908, 2.4455261, -1.3465717)
 
 [node name="Marionette" parent="." instance=ExtResource("1_ig7tw")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.16766381, 2.1429229, -2.9937568)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.16862476, 2.1334538, -3.459723)
