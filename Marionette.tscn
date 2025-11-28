@@ -8,7 +8,6 @@
 [node name="StringController" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 script = ExtResource("1_i3pqv")
-debug = false
 SwayAmplitude = 0.1
 
 [node name="String_Head" type="Node3D" parent="StringController"]
@@ -31,6 +30,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.18, -1.9665116, 0)
 
 [node name="PuppetManager" type="Node3D" parent="."]
 script = ExtResource("4_hqtel")
-GlbPath = "uid://4d0tplam3cfv"
+GlbPath = "uid://cqk8od748x4xm"
 StringControllerPath = NodePath("../StringController")
 AutoBuildOnReady = true

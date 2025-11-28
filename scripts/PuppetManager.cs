@@ -309,12 +309,12 @@ public partial class PuppetManager : Node3D
 		var new_pos = aabb.Position;
 		switch (side)
 		{
-			case Side.L:
+			case Side.R:
 				new_pos.X += JointOffset;
 				new_pos.Z += aabb.Size.Z / 2;
 				new_pos.Y += aabb.Size.Y / 2;
 				break;
-			case Side.R:
+			case Side.L:
 				new_pos.X += aabb.Size.X - JointOffset;
 				new_pos.Z += aabb.Size.Z / 2;
 				new_pos.Y += aabb.Size.Y / 2;

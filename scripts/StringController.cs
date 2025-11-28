@@ -33,8 +33,8 @@ public partial class StringController : Node3D
 	{
 		return limbName switch
 		{
-			// "Torso" => torsoTarget,
-			"Head" => headTarget,
+			"Torso" => torsoTarget,
+			// "Head" => headTarget,
 			"Arm_Lower_L" => leftHandTarget,
 			"Arm_Lower_R" => rightHandTarget,
 			"Leg_Lower_L" => leftFootTarget,
