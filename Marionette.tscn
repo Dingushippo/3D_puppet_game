@@ -1,58 +1,36 @@
-[gd_scene load_steps=4 format=3 uid="uid://bre84curdglv4"]
+[gd_scene load_steps=3 format=3 uid="uid://bre84curdglv4"]
 
 [ext_resource type="Script" uid="uid://ng7chjikwtn3" path="res://scripts/StringController.cs" id="1_i3pqv"]
-[ext_resource type="Script" uid="uid://c8n36yndsoq6l" path="res://scripts/PuppetManager.cs" id="2_hqtel"]
-[ext_resource type="Script" uid="uid://bbnjq23r7hui5" path="res://scripts/PuppetBuilder.cs" id="4_hqtel"]
+[ext_resource type="Script" uid="uid://bbnjq23r7hui5" path="res://scripts/PuppetManager.cs" id="4_hqtel"]
 
 [node name="Marionette" type="Node3D"]
 
-[node name="StringsRoot" type="Node3D" parent="."]
+[node name="StringController" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 script = ExtResource("1_i3pqv")
 debug = false
-TorsoTargetPath = NodePath("String_Torso")
-HeadTargetPath = NodePath("String_Head")
-LeftHandTargetPath = NodePath("String_LeftHand")
-RightHandTargetPath = NodePath("String_RightHand")
-LeftFootTargetPath = NodePath("String_LeftFoot")
-RightFootTargetPath = NodePath("String_RightFoot")
 SwayAmplitude = 0.1
 
-[node name="String_Head" type="Node3D" parent="StringsRoot"]
+[node name="String_Head" type="Node3D" parent="StringController"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5598748, 0)
 
-[node name="String_Torso" type="Node3D" parent="StringsRoot"]
+[node name="String_Torso" type="Node3D" parent="StringController"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.023094177, 0)
 
-[node name="String_LeftHand" type="Node3D" parent="StringsRoot"]
+[node name="String_LeftHand" type="Node3D" parent="StringController"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, -0.2835616, -0.3)
 
-[node name="String_RightHand" type="Node3D" parent="StringsRoot"]
+[node name="String_RightHand" type="Node3D" parent="StringController"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, -0.2835616, -0.3)
 
-[node name="String_LeftFoot" type="Node3D" parent="StringsRoot"]
+[node name="String_LeftFoot" type="Node3D" parent="StringController"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.18, -1.9665116, 0)
 
-[node name="String_RightFoot" type="Node3D" parent="StringsRoot"]
+[node name="String_RightFoot" type="Node3D" parent="StringController"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.18, -1.9665116, 0)
 
-[node name="PuppetRoot" type="Node3D" parent="."]
-script = ExtResource("2_hqtel")
-TorsoPath = NodePath("")
-HeadPath = NodePath("")
-LowerArmLPath = NodePath("")
-LowerArmRPath = NodePath("")
-LowerLegLPath = NodePath("")
-LowerLegRPath = NodePath("")
-StringTorsoPath = NodePath("../StringsRoot/String_Torso")
-StringHeadPath = NodePath("../StringsRoot/String_Head")
-StringLeftHandPath = NodePath("../StringsRoot/String_LeftHand")
-StringRightHandPath = NodePath("../StringsRoot/String_RightHand")
-StringLeftFootPath = NodePath("../StringsRoot/String_LeftFoot")
-StringRightFootPath = NodePath("../StringsRoot/String_RightFoot")
-
-[node name="PuppetBuilder" type="Node3D" parent="PuppetRoot"]
+[node name="PuppetManager" type="Node3D" parent="."]
 script = ExtResource("4_hqtel")
 GlbPath = "uid://4d0tplam3cfv"
+StringControllerPath = NodePath("../StringController")
 AutoBuildOnReady = true
-DebugJoints = true
